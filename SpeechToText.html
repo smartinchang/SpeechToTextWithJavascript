@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+			body {
+				font-family: arial;
+			}
+			button {
+				padding:10px;
+				background-color:#6a67ce;
+				color: #FFFFFF;
+				border: 0px;
+				cursor:pointer;
+				border-radius: 5px;
+			}
+			#output {
+				background-color:#F9F9F9;
+				padding:10px;
+				width: 100%;
+				margin-top:20px;
+				line-height:30px;
+			}
+			.hide {
+				display:none;
+			}
+			.show {
+				display:block;
+			}
+		</style>
+		<title>Chuyển giọng nói sang chữ viết bằng Javascript</title>
+		<meta charset="UTF-8">
+		<script src="analytics.js"></script>
+	</head>
+	<body>
+		<h2>Chuyển giọng nói sang chữ viết bằng Javascript</h2>
+		<p>Nhấn vào nút phía dưới và đọc...</p>
+		<p><button type="button" onclick="runSpeechRecognition()">Chuyển giọng nói sang chữ viết</button> &nbsp; <span id="action"></span></p>
+		<div id="output" class="hide"></div>
+		<script>
+			/* hàm thực thi khi nhấn nút */
+			function runSpeechRecognition() {
+				var output = document.getElementById("output");
+				var action = document.getElementById("action");
+				// Khai báo đối tượng Speech Recognition
+				var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+				var recognition = new SpeechRecognition();
+				//recognition.lang = 'en-US';
+				recognition.lang = 'vi-VN';
+				// Dịch vụ Speech Recognition bắt đầu
+				recognition.onstart = function() {
+					action.innerHTML = "<small>Mình đang lắng nghe, mời bạn đọc...</small>";
+				};
+				recognition.onspeechend = function() {
+					action.innerHTML = "<small>Mình không còn lắng nghe nữa, hy vọng bạn đã đọc xong...</small>";
+					recognition.stop();
+				}
+				// Xuất ra kết quả
+				recognition.onresult = function(event) {
+					var transcript = event.results[0][0].transcript;
+					var confidence = event.results[0][0].confidence;
+					output.innerHTML = "<b>Văn bản:</b> " + transcript + "<br/> <b>Độ tin cậy:</b> " + confidence*100+"%";
+					output.classList.remove("hide");
+				};
+				// Bắt đầu nhận dạng
+				recognition.start();
+			}
+		</script>
+	</body>
+</html>
